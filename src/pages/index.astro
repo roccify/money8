@@ -1,0 +1,552 @@
+---
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="sl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#031f18" />
+    <meta name="description" content="Pregled tekočega zaslužka." />
+    <title>Zaslužek</title>
+  </head>
+  <body>
+    <main class="page-shell">
+      <div class="ambient ambient-one" aria-hidden="true"></div>
+      <div class="ambient ambient-two" aria-hidden="true"></div>
+      <div class="ambient ambient-three" aria-hidden="true"></div>
+      <div class="fine-grid" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+
+      <section class="dashboard">
+        <header class="topbar">
+          <div class="brand-wrap">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <p class="brand">ZASLUŽEK</p>
+          </div>
+          <p id="current-time" class="current-time" aria-label="Trenutni čas"></p>
+          <p id="current-date" class="current-date"></p>
+        </header>
+
+        <div class="metrics-grid">
+          <article class="metric-card">
+            <div class="card-sheen" aria-hidden="true"></div>
+            <div class="metric-head">
+              <h2>Danes</h2>
+            </div>
+            <div class="metric-body">
+              <div id="today" class="money-value" aria-live="off">0 €</div>
+              <div class="metric-rule" aria-hidden="true"></div>
+            </div>
+          </article>
+
+          <article class="metric-card">
+            <div class="card-sheen" aria-hidden="true"></div>
+            <div class="metric-head">
+              <h2>Ta mesec</h2>
+            </div>
+            <div class="metric-body">
+              <div id="month" class="money-value" aria-live="off">0 €</div>
+              <div class="metric-rule" aria-hidden="true"></div>
+            </div>
+          </article>
+
+          <article class="metric-card metric-card--featured">
+            <div class="card-sheen" aria-hidden="true"></div>
+            <div class="featured-orb" aria-hidden="true"></div>
+            <div class="metric-head">
+              <h2>Od začetka leta</h2>
+            </div>
+            <div class="metric-body">
+              <div id="year" class="money-value money-value--wide" aria-live="off">0 €</div>
+              <div class="metric-rule metric-rule--gold" aria-hidden="true"></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <style>
+      .page-shell {
+        position: relative;
+        min-height: 100dvh;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 50% -10%, rgba(25, 104, 76, 0.36), transparent 42%),
+          linear-gradient(135deg, #04271d 0%, #031f18 48%, #021a14 100%);
+        color: #f8f2df;
+      }
+
+      .dashboard {
+        position: relative;
+        z-index: 3;
+        width: min(1240px, calc(100% - 40px));
+        min-height: 100dvh;
+        margin: 0 auto;
+        padding: max(30px, env(safe-area-inset-top)) 0 max(34px, env(safe-area-inset-bottom));
+        display: flex;
+        flex-direction: column;
+      }
+
+      .ambient,
+      .fine-grid,
+      .grain {
+        pointer-events: none;
+        position: absolute;
+      }
+
+      .ambient {
+        border-radius: 999px;
+        filter: blur(110px);
+      }
+
+      .ambient-one {
+        width: 54vw;
+        height: 54vw;
+        left: -20vw;
+        top: -24vw;
+        background: rgba(19, 113, 80, 0.24);
+      }
+
+      .ambient-two {
+        width: 44vw;
+        height: 44vw;
+        right: -15vw;
+        bottom: -20vw;
+        background: rgba(17, 80, 58, 0.34);
+      }
+
+      .ambient-three {
+        width: 38vw;
+        height: 38vw;
+        left: 46%;
+        top: 40%;
+        background: rgba(200, 164, 83, 0.065);
+      }
+
+      .fine-grid {
+        inset: 0;
+        opacity: 0.12;
+        background-image:
+          linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+        background-size: 64px 64px;
+        mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+      }
+
+      .grain {
+        inset: 0;
+        opacity: 0.08;
+        background-image:
+          radial-gradient(circle at 20% 30%, rgba(255,255,255,.16) 0 0.5px, transparent 0.8px),
+          radial-gradient(circle at 70% 65%, rgba(255,255,255,.12) 0 0.5px, transparent 0.8px);
+        background-size: 7px 7px, 9px 9px;
+        mix-blend-mode: soft-light;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        gap: 24px;
+        min-height: 74px;
+        border-bottom: 1px solid rgba(222, 191, 113, 0.16);
+      }
+
+      .brand-wrap {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        width: 28px;
+        height: 1px;
+        background: linear-gradient(90deg, #9d7f3b, #efd995);
+        box-shadow: 0 0 18px rgba(230, 203, 132, 0.22);
+      }
+
+      .brand {
+        margin: 0;
+        font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.26em;
+        color: #ead8a0;
+      }
+
+      .current-time,
+      .current-date {
+        margin: 0;
+        color: rgba(234, 239, 228, 0.66);
+        font-variant-numeric: tabular-nums lining-nums;
+      }
+
+      .current-time {
+        justify-self: center;
+        font-size: 0.96rem;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        color: rgba(236, 228, 201, 0.58);
+      }
+
+      .current-date {
+        justify-self: end;
+        font-size: 1rem;
+        letter-spacing: 0.075em;
+        text-align: right;
+      }
+
+      .metrics-grid {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+        align-content: start;
+        padding: 88px 0 20px;
+      }
+
+      .metric-card {
+        position: relative;
+        min-width: 0;
+        min-height: 252px;
+        overflow: hidden;
+        border: 1px solid rgba(220, 188, 111, 0.15);
+        border-radius: 28px;
+        padding: 26px 28px 24px;
+        background:
+          linear-gradient(145deg, rgba(18, 80, 59, 0.66), rgba(6, 47, 35, 0.82)),
+          rgba(255,255,255,0.02);
+        box-shadow:
+          0 28px 80px rgba(0, 0, 0, 0.24),
+          inset 0 1px 0 rgba(255, 255, 255, 0.045),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+
+      .metric-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        background: linear-gradient(115deg, rgba(255,255,255,.032), transparent 26%, transparent 70%, rgba(229,199,126,.025));
+      }
+
+      .metric-card--featured {
+        border-color: rgba(224, 191, 107, 0.21);
+        background:
+          linear-gradient(145deg, rgba(24, 85, 62, 0.69), rgba(7, 47, 35, 0.85)),
+          rgba(255,255,255,0.023);
+        box-shadow:
+          0 28px 82px rgba(0, 0, 0, 0.25),
+          0 0 0 1px rgba(209, 175, 91, 0.025) inset,
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+
+      .card-sheen {
+        position: absolute;
+        inset: 0 auto auto 9%;
+        width: 82%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(245, 222, 154, 0.52), transparent);
+        opacity: 0.68;
+      }
+
+      .featured-orb {
+        position: absolute;
+        width: 240px;
+        height: 240px;
+        right: -85px;
+        top: -95px;
+        border-radius: 999px;
+        background: rgba(231, 203, 127, 0.045);
+        filter: blur(10px);
+      }
+
+      .metric-head,
+      .metric-body {
+        position: relative;
+        z-index: 2;
+      }
+
+      .metric-head {
+        display: flex;
+        align-items: baseline;
+      }
+
+      .metric-head h2 {
+        margin: 0;
+        font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+        font-size: clamp(1.35rem, 1.65vw, 1.68rem);
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        color: rgba(244, 237, 215, 0.92);
+      }
+
+      .metric-body {
+        height: calc(100% - 36px);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding-top: 30px;
+      }
+
+      .money-value {
+        width: 100%;
+        min-width: 0;
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: clamp(3rem, 4.15vw, 4.15rem);
+        font-weight: 560;
+        line-height: 0.96;
+        letter-spacing: -0.06em;
+        color: #fff9e8;
+        font-variant-numeric: tabular-nums lining-nums;
+        font-feature-settings: "tnum" 1, "lnum" 1;
+        white-space: nowrap;
+        text-rendering: geometricPrecision;
+        text-shadow: 0 12px 34px rgba(0, 0, 0, 0.16);
+      }
+
+      .money-value--wide {
+        background: linear-gradient(180deg, #fff8df 0%, #f0dfa9 64%, #d9c27b 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .metric-rule {
+        margin-top: 22px;
+        width: 56px;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(216, 183, 101, 0.62), rgba(216, 183, 101, 0.12), transparent);
+      }
+
+      .metric-rule--gold {
+        background: linear-gradient(90deg, rgba(234, 204, 126, 0.72), rgba(255,255,255,.055) 60%, transparent);
+      }
+
+      @media (max-width: 900px) {
+        .dashboard {
+          width: min(760px, calc(100% - 28px));
+        }
+
+        .metrics-grid {
+          grid-template-columns: 1fr;
+          align-content: start;
+          gap: 10px;
+          padding-top: 14px;
+        }
+
+        .metric-card {
+          min-height: 134px;
+          border-radius: 24px;
+          padding: 18px 22px 16px;
+        }
+
+        .metric-body {
+          padding-top: 14px;
+        }
+
+        .money-value,
+        .money-value--wide {
+          font-size: clamp(2.35rem, 8vw, 3.7rem);
+        }
+
+        .metric-rule {
+          margin-top: 12px;
+          width: 48px;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .dashboard {
+          width: calc(100% - 20px);
+          padding-top: max(12px, env(safe-area-inset-top));
+          padding-bottom: max(10px, env(safe-area-inset-bottom));
+        }
+
+        .topbar {
+          grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+          min-height: 48px;
+          gap: 8px;
+        }
+
+        .brand-wrap {
+          gap: 11px;
+        }
+
+        .brand-mark {
+          width: 18px;
+        }
+
+        .brand {
+          font-size: 0.78rem;
+          letter-spacing: 0.2em;
+        }
+
+        .current-time {
+          font-size: 0.78rem;
+          letter-spacing: 0.07em;
+          white-space: nowrap;
+        }
+
+        .current-date {
+          font-size: 0.8rem;
+          line-height: 1.15;
+          letter-spacing: 0.02em;
+          text-align: right;
+          white-space: nowrap;
+          color: rgba(234, 239, 228, 0.68);
+        }
+
+        .metrics-grid {
+          gap: 8px;
+          padding-top: 10px;
+          padding-bottom: 0;
+        }
+
+        .metric-card {
+          min-height: 112px;
+          border-radius: 19px;
+          padding: 13px 16px 12px;
+        }
+
+        .metric-head h2 {
+          font-size: 1.05rem;
+          letter-spacing: -0.015em;
+        }
+
+        .metric-body {
+          height: calc(100% - 26px);
+          padding-top: 8px;
+        }
+
+        .money-value,
+        .money-value--wide {
+          font-size: clamp(1.95rem, 9.6vw, 2.8rem);
+          letter-spacing: -0.05em;
+        }
+
+        .metric-rule {
+          margin-top: 9px;
+          width: 42px;
+        }
+      }
+
+      @media (max-width: 365px) {
+        .dashboard {
+          width: calc(100% - 16px);
+        }
+
+        .metric-card {
+          min-height: 108px;
+          padding-left: 14px;
+          padding-right: 14px;
+        }
+
+        .money-value,
+        .money-value--wide {
+          font-size: 1.9rem;
+        }
+      }
+    </style>
+
+    <script>
+      const MONTHLY_INCOME = 150_000;
+
+      function formatMoney(value) {
+        const wholeEuros = Math.floor(value);
+        const groupedInteger = String(wholeEuros).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return `${groupedInteger} €`;
+      }
+
+      const slDate = new Intl.DateTimeFormat('sl-SI', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+
+      const slTime = new Intl.DateTimeFormat('sl-SI', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+
+      const todayEl = document.querySelector('#today');
+      const monthEl = document.querySelector('#month');
+      const yearEl = document.querySelector('#year');
+      const timeEl = document.querySelector('#current-time');
+      const dateEl = document.querySelector('#current-date');
+
+      let previousTime = '';
+      let previousDate = '';
+      const previousValues = {
+        today: '',
+        month: '',
+        year: ''
+      };
+
+      function calculateIncome(now) {
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const day = now.getDate();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        const startOfDay = new Date(year, month, day, 0, 0, 0, 0);
+        const endOfDay = new Date(year, month, day + 1, 0, 0, 0, 0);
+        const dayDuration = endOfDay.getTime() - startOfDay.getTime();
+        const elapsedToday = Math.min(
+          1,
+          Math.max(0, (now.getTime() - startOfDay.getTime()) / dayDuration)
+        );
+
+        const dailyIncome = MONTHLY_INCOME / daysInMonth;
+        const todayIncome = dailyIncome * elapsedToday;
+        const monthIncome = dailyIncome * ((day - 1) + elapsedToday);
+        const yearIncome = month * MONTHLY_INCOME + monthIncome;
+
+        return { todayIncome, monthIncome, yearIncome };
+      }
+
+      function setMoney(element, key, value) {
+        if (!(element instanceof HTMLElement)) return;
+        const formatted = formatMoney(value);
+        if (formatted === previousValues[key]) return;
+        element.textContent = formatted;
+        previousValues[key] = formatted;
+      }
+
+      function render() {
+        const now = new Date();
+        const values = calculateIncome(now);
+
+        setMoney(todayEl, 'today', values.todayIncome);
+        setMoney(monthEl, 'month', values.monthIncome);
+        setMoney(yearEl, 'year', values.yearIncome);
+
+        if (timeEl) {
+          const formattedTime = slTime.format(now);
+          if (formattedTime !== previousTime) {
+            timeEl.textContent = formattedTime;
+            previousTime = formattedTime;
+          }
+        }
+
+        if (dateEl) {
+          const formattedDate = slDate.format(now);
+          if (formattedDate !== previousDate) {
+            dateEl.textContent = formattedDate;
+            previousDate = formattedDate;
+          }
+        }
+
+        window.requestAnimationFrame(render);
+      }
+
+      window.requestAnimationFrame(render);
+    </script>
+  </body>
+</html>
